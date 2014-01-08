@@ -8,6 +8,7 @@
             (let [path "path/to/file"
                   data {:some :data}
                   db (post-app nil path data)]
-                (is (not (nil? db)))))))
-
-(run-tests)
+                (testing "that the result is not nil also"
+                    (is (not (nil? db))))
+                (testing "that getting the default version will return the old data"
+                    (is data (get-app db path)))))))

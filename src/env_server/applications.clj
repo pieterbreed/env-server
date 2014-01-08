@@ -37,7 +37,6 @@
 
 (defn get-app
     "Gets the data from the app"
-    ([db path] (get-app path (get-in db [:apps path :current]))) ;; redirect to current version
     ([db path version]
         (let [apps (get db :apps {})]
             (if (not (contains? apps path))
@@ -45,6 +44,8 @@
             (let [app-versions (get-in apps [path :versions] {})]
                 (if (not (contains? app-versions version))
                     (throw+ {:type :notfound :sub-type :version :path path :version version})
-                (get app-versions version)))))))
+                (get app-versions version))))))
+    ([db path] (get-app path (get-in db [:apps path :current])))) ;; redirect to current version
+
 
 
