@@ -34,7 +34,7 @@
           versions (get app :versions {})]
         (if (not (contains? versions version))
             (throw+ {:type ::notfound :sub-type ::version :path path :version version})
-            (get app version))))
+            (get versions version))))
 
 (defn post-app
     "Add the application identified by path to the db"
