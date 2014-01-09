@@ -50,6 +50,7 @@
                                     (DateTimeUtils/setCurrentMillisOffset 1)
                                     (recur (rest datas)
                                        (post-app db path (first datas))))))]
-                    (is '("" "" "") (get-app-versions db path)))))))
+                    (print (get-app-versions db path))
+                    (is (= '("" "" "") (get-app-versions db path))))))))
 
 
