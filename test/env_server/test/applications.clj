@@ -43,14 +43,18 @@
                     (is version (first versions)))))
         (testing "app version are returned in order of creation"
             (do-at (time/date-time)
-                (let [db (loop [datas [{:a :first} {:a :second} {:a :third}]
-                                db db]
-                            (if (empty? datas) db
-                                (do
-                                    (DateTimeUtils/setCurrentMillisOffset 1)
-                                    (recur (rest datas)
-                                       (post-app db path (first datas))))))]
+                (let [[db hashes] (loop [datas [{:a :first} {:a :second} {:a :third}]
+                                         db nil
+                                         hashes '()]
+                                    (if (empty? datas) [db hashes]
+                                        (do
+                                          (DateTimeUtils/setCurrentMillisOffset 1)
+                                          (recur (rest datas)
+                                                 (post-app db path (first datas))
+                                                 (conj hashes (-create-app-hash (first datas)))))))]
                     (print (get-app-versions db path))
-                    (is (= '("" "" "") (get-app-versions db path))))))))
+                    (is (= hashes (get-app-versions db path))))))))
+
+
 
 
