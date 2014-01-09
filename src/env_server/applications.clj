@@ -61,7 +61,7 @@
             (throw+ {:type ::bad-request :sub-type ::version-not-specified :current-version (:current app)}))))
 
 (defn get-app-versions
-    "gets the list of version from the app, sorted by creation timestamp"
+    "gets the list of version from the app, sorted desc by creation timestamp"
     [db path]
     (let [app (-get-app-or-error db path)
           versions (->> (:versions app)
