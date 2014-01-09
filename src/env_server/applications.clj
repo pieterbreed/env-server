@@ -38,7 +38,7 @@
 
 (defn post-app
     "Add the application identified by path to the db"
-    [db path data ]
+    [db path data & [based-on]]
     (let [app (get-in db [:apps path] {})
           previous-versions (get app :versions {})
           previous-version (get app :current nil)
@@ -61,8 +61,8 @@
             (throw+ {:type ::bad-request :sub-type ::version-not-specified :current-version (:current app)}))))
 
 (defn get-app-versions
-    "gets the list of version from the app, sorted desc by creation timestamp"
-    [db path & [based-on]]
+    "gets the list of version from the app, sorted desc by creation timestamp. An app can be based on another app, provided the specification for the other app includes both the path and the version string"
+    [db path]
     (let [app (-get-app-or-error db path)
           versions (->> (:versions app)
                         (map #(get % 1))
