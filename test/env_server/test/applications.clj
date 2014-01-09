@@ -32,7 +32,7 @@
                 (is version 
                     (try+ (get-app db path)
                         (catch [:type     :env-server.applications/bad-request 
-                                :sub-type :env-server.applications/version-not-specified] 
+nt                                :sub-type :env-server.applications/version-not-specified] 
                                 {:keys [current-version]}
                             current-version))))
             (testing "that we can get the (predicted) version and it has the original data"
@@ -52,8 +52,31 @@
                                           (recur (rest datas)
                                                  (post-app db path (first datas))
                                                  (conj hashes (-create-app-hash (first datas)))))))]
-                    (print (get-app-versions db path))
                     (is (= hashes (get-app-versions db path))))))))
+
+(deftest apps-based-on-other-apps
+  (testing "can base an app on another app"
+    (let [oldapp {:name "oldapp"
+                  :path "path/to/old/app"
+                  :data {:a 1
+                         :b 2}}
+          newapp {:name "newapp"
+                  :path "path/to/new/app"
+                  :data {:c 3
+                         :d 4}}
+          db (post-app nil (:path oldapp) (:data oldapp))]
+      (testing "when the new app does not exist yet"
+        (post-app db (:path newapp) (:data newapp))))
+    (testing "when the new app exists already and was previously based on another app"
+      (is false))
+    (testing "when the new app exists already and was not previously based on another app"
+      (is false)))
+  (testing "when based on another app"
+    (testing "retains all new data"
+      (is false))
+    (testing "retains all data from based-on app, when no data is changed"
+      (is false))
+    (testing "honours data that is changed in the new app")))
 
 
 
