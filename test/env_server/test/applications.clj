@@ -55,20 +55,36 @@
                (is (= hashes (get-app-versions db path))))))))
 
 (deftest apps-based-on-other-apps
+  (testing "can not base an app on another app that is not specified well"
+    (is (= :env-server.applications/notfound
+           (try+ (post-app nil "path" {:a 1} ["base-app/path" "version"])
+                 (catch [:type :env-server.applications/notfound
+                         :sub-type :env-server.applications/path]
+                     {:keys [type]}
+                   type)))))
   (testing "can base an app on another app"
     (let [oldapp {:name "oldapp"
                   :path "path/to/old/app"
                   :data {:a 1
                          :b 2}}
+          oldapp (assoc oldapp
+                   :version (-create-app-hash (:data oldapp)))
           newapp {:name "newapp"
                   :path "path/to/new/app"
                   :data {:c 3
                          :d 4}}
-          db (post-app nil (:path oldapp) (:data oldapp))]
+          newapp (assoc newapp
+                  :version (-create-app-hash (:data newapp)))
+          db (post-app nil
+                       (:path oldapp) (:data oldapp))]
       (testing "when the new app does not exist yet"
-        (post-app db (:path newapp) (:data newapp))))
-    (testing "when the new app exists already and was previously based on another app"
-      (is false))
+        (post-app db
+                  (:path newapp) (:data newapp)
+                  [(:path oldapp) (:version oldapp)]))
+      (testing "when the new app exists already and was previously based on another app"
+        (post-app db
+                  (:path newapp) (assoc (:data newapp) {:e 5})
+                  [(:path oldapp) (:version oldapp)]))
     (testing "when the new app exists already and was not previously based on another app"
       (is false)))
   (testing "when based on another app"
@@ -76,7 +92,7 @@
       (is false))
     (testing "retains all data from based-on app, when no data is changed"
       (is false))
-    (testing "honours data that is changed in the new app")))
+    (testing "honours data that is changed in the new app"))))
 
 
 
