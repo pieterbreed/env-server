@@ -1,6 +1,7 @@
 (ns env-server.test.applications
   (:use clojure.test
         env-server.applications
+        clojure.pprint
         [slingshot.slingshot :only [throw+ try+]])
   (:import [org.joda.time DateTimeUtils])
   (:require [joda-time :as time]))
@@ -78,12 +79,13 @@
           db (post-app nil
                        (:path oldapp) (:data oldapp))]
       (testing "when the new app does not exist yet"
+        (clojure.pprint/pprint db)
         (post-app db
                   (:path newapp) (:data newapp)
                   [(:path oldapp) (:version oldapp)]))
       (testing "when the new app exists already and was previously based on another app"
         (post-app db
-                  (:path newapp) (assoc (:data newapp) {:e 5})
+                  (:path newapp) (merge (:data newapp) {:e 5})
                   [(:path oldapp) (:version oldapp)]))
     (testing "when the new app exists already and was not previously based on another app"
       (is false)))

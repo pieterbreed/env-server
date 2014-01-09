@@ -42,19 +42,20 @@
 Optionally: add a based-on vector [path version] which, if specified, will be resolved if it can (else failure) and the data for that app will be the base-data for this app. Ie, the new apps result data will be the result of merging the base-app's data with the newly specified data"
     [db path data & [based-on]]
     (let [base-app (when-let [based-on based-on]
-                     (apply -get-app-or-error based-on))
+                     (apply -get-app-version-or-error db based-on))
           app (get-in db [:apps path] {})
           previous-versions (get app :versions {})
           previous-version (get app :current nil)
           meta (assoc (-create-meta-info path data)
-                      :previous-version previous-version)
+                 :previous-version previous-version)
           new-version {:meta meta
+                       :based-on base-app
                        :data data}
           ver (:version-nr meta)
           app (-> app
                   (assoc :current ver 
                          :versions (assoc previous-versions ver new-version)))]
-        (assoc-in db [:apps path] app)))
+      (assoc-in db [:apps path] app)))
 
 (defn get-app
     "Gets the data from the app"
