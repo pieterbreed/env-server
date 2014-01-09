@@ -79,7 +79,6 @@
           db (post-app nil
                        (:path oldapp) (:data oldapp))]
       (testing "when the new app does not exist yet"
-        (clojure.pprint/pprint db)
         (post-app db
                   (:path newapp) (:data newapp)
                   [(:path oldapp) (:version oldapp)]))
@@ -87,14 +86,16 @@
         (post-app db
                   (:path newapp) (merge (:data newapp) {:e 5})
                   [(:path oldapp) (:version oldapp)]))
-    (testing "when the new app exists already and was not previously based on another app"
-      (is false)))
-  (testing "when based on another app"
-    (testing "retains all new data"
-      (is false))
-    (testing "retains all data from based-on app, when no data is changed"
-      (is false))
-    (testing "honours data that is changed in the new app"))))
+      (testing "when the new app exists already and was not previously based on another app"
+        (post-app db
+                  (:path oldapp) (merge (:data oldapp) {:e 5})
+                  [(:path oldapp) (:version oldapp)]))
+      (testing "when based on another app"
+        (testing "retains all new data"
+          (is false))
+        (testing "retains all data from based-on app, when no data is changed"
+          (is false))
+        (testing "honours data that is changed in the new app")))))
 
 
 
