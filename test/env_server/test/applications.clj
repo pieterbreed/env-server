@@ -92,7 +92,19 @@
                   [(:path oldapp) (:version oldapp)]))
       (testing "when based on another app"
         (testing "retains all new data"
-          (is false))
+          (let [expectednewappdata {:a 1
+                                    :b 2
+                                    :c 3
+                                    :d 4}
+                newappdb (post-app db
+                                   (:path newapp)
+                                   (:data newapp)
+                                   [(:path oldapp) (:version oldapp)])
+                newappdata (-> (get-app newappdb
+                                        (:path newapp)
+                                        (:version newapp))
+                               :data)]
+            (is (and (= )))))
         (testing "retains all data from based-on app, when no data is changed"
           (is false))
         (testing "honours data that is changed in the new app")))))
