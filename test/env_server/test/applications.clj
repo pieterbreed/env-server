@@ -105,7 +105,8 @@
                    (:data newapp))))))
         (testing "retains all data from based-on app, when no data is changed"
           (is false))
-        (testing "honours data that is changed in the new app"))))
+        (testing "honours data that is changed in the new app"
+          (is false )))))
 
 
 
