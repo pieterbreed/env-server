@@ -49,7 +49,7 @@ Optionally: add a based-on vector [path version] which, if specified, will be re
           meta (assoc (-create-meta-info path data)
                  :previous-version previous-version)
           new-version {:meta meta
-                       :based-on base-appo
+                       :based-on base-app
                        :data data}
           ver (:version-nr meta)
           app (-> app
